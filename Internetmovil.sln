@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Internetmovil", "Internetmovil\Internetmovil.csproj", "{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D20BEAB7-7925-473A-8449-AA5AAC19BD92}
+	EndGlobalSection
+EndGlobal
