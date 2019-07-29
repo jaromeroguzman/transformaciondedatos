@@ -11,10 +11,10 @@ namespace Internetmovil
 {
     class Program
     {
-        static void ProcesarJSON()
+        static DatosInternetMovil JArrayToDIM(JArray arreglo)
         {
             var directorio = new Dictionary<string, Int16> {
-                { "PROVEEDOR", 8 },
+                { "PROVEEDOR", 8 }, // del archivo original se capturaron los datos. se asosica el nombre que nosotros queremos con el índice en el que se encuentra este archivo
                 { "SUSCRIPTORES_2015_2T", 9 },
                 { "SUSCRIPTORES_2016_1T", 10 },
                 { "SUSCRIPTORES_2016_2T", 11 },
@@ -22,15 +22,30 @@ namespace Internetmovil
                 { "POBLACIONS_2016_1T", 13 },
                 { "POBLACION_2016_2T", 14 },
             };
+            var objetoARetornar = new DatosInternetMovil
+            {
+                Proveedor = (arreglo[directorio["PROVEEDOR"]] as JValue).Value as string, 
+                Suscriptores_2015_2T = Convert.ToInt32((arreglo[directorio["SUSCRIPTORES_2015_2T"]] as JValue).Value), //se convierte de string a entero
+                Suscriptores_2016_1T = Convert.ToInt32((arreglo[directorio["SUSCRIPTORES_2016_1T"]] as JValue).Value),
+                Poblacion_2015_2T = Convert.ToInt32((arreglo[directorio["POBLACION_2015_2T"]] as JValue).Value ),
+                Poblacion_2016_1T = Convert.ToInt32((arreglo[directorio["POBLACIONS_2016_1T"]] as JValue).Value),
+            };
+            return objetoARetornar; 
+        }
+
+        static void ProcesarJSON()
+        {
+            
             var ruta = @"C:\Users\carlo\Documents\DATOS\INTERNET_MOVIL.json";
             var contenido = File.ReadAllText(ruta);
             var resultado = JsonConvert.DeserializeObject<JObject>(contenido);
             var data = resultado.SelectToken("data") as JArray;
-            foreach (JArray datum in data)
-            {
-
-                Console.WriteLine(datum[directorio["POBLACION_2015_2T"]]);
-            }
+            var datosSalida = data.Select(x => JArrayToDIM(x as JArray));
+            var jsonAGuardar = JsonConvert.SerializeObject(datosSalida); // se realiza la trasnformaci{on de datos
+            var rutaSalida = @"C:\Users\carlo\Downloads\jsonreducido.json"; // en esta ruta se guarda el archivo procesado
+            var archivoSalida = File.CreateText(rutaSalida); // se crea el archivo de salida
+            archivoSalida.Write(jsonAGuardar); // se escribe la representaci{on json de los datose
+            archivoSalida.Close();
         }
 
         static void ProcesarCsv()
