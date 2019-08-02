@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using OfficeOpenXml;
+using Dapper;
 
 namespace Internetmovil
 {
@@ -33,7 +36,7 @@ namespace Internetmovil
             return objetoARetornar; 
         }
 
-        static void ProcesarJSON()
+        static List<DatosInternetMovil> ProcesarJSON()
         {
             
             var ruta = @"C:\Users\carlo\Documents\DATOS\INTERNET_MOVIL.json";
@@ -41,11 +44,37 @@ namespace Internetmovil
             var resultado = JsonConvert.DeserializeObject<JObject>(contenido);
             var data = resultado.SelectToken("data") as JArray;
             var datosSalida = data.Select(x => JArrayToDIM(x as JArray));
-            var jsonAGuardar = JsonConvert.SerializeObject(datosSalida); // se realiza la trasnformaci{on de datos
-            var rutaSalida = @"C:\Users\carlo\Downloads\jsonreducido.json"; // en esta ruta se guarda el archivo procesado
-            var archivoSalida = File.CreateText(rutaSalida); // se crea el archivo de salida
-            archivoSalida.Write(jsonAGuardar); // se escribe la representaci{on json de los datose
-            archivoSalida.Close();
+            return datosSalida.ToList();
+            //var jsonAGuardar = JsonConvert.SerializeObject(datosSalida); // se realiza la trasnformaci{on de datos
+            //var rutaSalida = @"C:\Users\carlo\Downloads\jsonreducido.json"; // en esta ruta se guarda el archivo procesado
+            //var archivoSalida = File.CreateText(rutaSalida); // se crea el archivo de salida
+            //archivoSalida.Write(jsonAGuardar); // se escribe la representaci{on json de los datose
+            //archivoSalida.Close();
+        }
+
+        public static void CrearExcel(List<DatosInternetMovil> lista)
+        {
+            using (var p = new ExcelPackage())
+            {
+                var ws = p.Workbook.Worksheets.Add("DIM");
+                var numFila = 2;
+                ws.Cells[1, 1].Value = "Proveedor";
+                ws.Cells[1, 2].Value = "Suscriptores_2015_2T";
+                ws.Cells[1, 3].Value = "Suscriptores_2016_1T";
+                ws.Cells[1, 4].Value = "Poblacion_2015_2T";
+                ws.Cells[1, 5].Value = "Poblacion_2016_1T";
+                foreach (var registro in lista)
+                {
+                    ws.Cells[numFila, 1].Value = registro.Proveedor;
+                    ws.Cells[numFila, 2].Value = registro.Suscriptores_2015_2T;
+                    ws.Cells[numFila, 3].Value = registro.Suscriptores_2016_1T;
+                    ws.Cells[numFila, 4].Value = registro.Poblacion_2015_2T;
+                    ws.Cells[numFila, 5].Value = registro.Poblacion_2016_1T;
+                    numFila++;
+                }
+
+                p.SaveAs(new FileInfo(@"C:\Users\carlo\Downloads\Comparativo_Segundo_Trimestre_vs_Primer_Trimestre_2016.xlsx"));
+            }
         }
 
         static void ProcesarCsv()
@@ -74,9 +103,24 @@ namespace Internetmovil
             archivo.Close();
 
         }
+
+        static void procesarXml()
+        {
+            var ruta = @"C:\Users\carlo\Documents\DATOS\internetmovilporsuscriptor.xml";
+            var nodo = XElement.Load(ruta);
+            var filas = nodo.Element("row").Elements("row");
+            var totalSubs =  filas.
+                                Select(x => x.Element("suscriptores_2015_2t").Value).
+                                Select(int.Parse).
+                                Sum();
+            Console.WriteLine(totalSubs);
+        }
         static void Main(string[] args)
         {
-            ProcesarJSON();// se est{a llamando el m{etodo para porcesar el json
+            //procesarXml();
+            CrearExcel(ProcesarJSON());// se est{a llamando el m{etodo para porcesar el json
+            Console.WriteLine("He terminado");
+            Console.ReadKey();
         }
     }
 }

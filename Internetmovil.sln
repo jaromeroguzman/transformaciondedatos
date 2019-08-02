@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Internetmovil", "Internetmovil\Internetmovil.csproj", "{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Internetmovil", "Internetmovil\Internetmovil.csproj", "{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DataTransform", "DataTransform\DataTransform.fsproj", "{254ED3EF-D4E2-4750-A8B4-F5FB56672AA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE7066F8-7FA4-4EDA-8DDD-7D100EF589BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{254ED3EF-D4E2-4750-A8B4-F5FB56672AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{254ED3EF-D4E2-4750-A8B4-F5FB56672AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{254ED3EF-D4E2-4750-A8B4-F5FB56672AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{254ED3EF-D4E2-4750-A8B4-F5FB56672AA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
