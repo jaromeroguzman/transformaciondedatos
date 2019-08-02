@@ -9,11 +9,22 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using OfficeOpenXml;
 using Dapper;
+using System.Data.SqlClient;
 
 namespace Internetmovil
 {
     class Program
     {
+        static void GuardarenSql(IEnumerable<DatosInternetMovil> Lista) 
+        {
+            SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-M667DM4Q;Initial Catalog=Internet_movil;Integrated Security=true");
+            conexion.Open();
+            foreach (var registro in Lista)
+            {
+                conexion.Execute("INSERT INTO proveedorInternetMovil VALUES(@Proveedor, @Suscriptores_2015_2T, @Suscriptores_2016_1T, @Poblacion_2016_1T, @Poblacion_2015_2T)", registro);
+            }
+            conexion.Close();
+        }
         static DatosInternetMovil JArrayToDIM(JArray arreglo)
         {
             var directorio = new Dictionary<string, Int16> {
@@ -77,30 +88,32 @@ namespace Internetmovil
             }
         }
 
-        static void ProcesarCsv()
+        static IEnumerable<DatosInternetMovil> ProcesarCsv()
         {
             string FloatToCustomString(double num)
             {
                 return num.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture);
             }
+           
             var ruta = @"C:\Users\carlo\Downloads\Comparativo_Segundo_Trimestre_vs_Primer_Trimestre_2016.csv";
             var rutaSalida = @"C:\Users\carlo\Downloads\datosTransformados.csv";
             var archivo = File.OpenText(ruta);
             var csv = new CsvReader(archivo);
             csv.Configuration.Delimiter = ",";
-            var registros1 = csv.GetRecords<DatosInternetMovil>().
-                Select(registro =>
-                    (registro.Proveedor,
-                     porc1: registro.Suscriptores_2015_2T * 100.0 / registro.Poblacion_2015_2T,
-                     porc2: registro.Suscriptores_2016_1T * 100.0 / registro.Poblacion_2016_1T));
-            var archivoSalida = File.CreateText(rutaSalida);
-            archivoSalida.WriteLine("Proveedor,Porcentaje_penetracion_2015,Porcentaje_penetracion_2016");
-            foreach (var (proveedor, porc1, porc2) in registros1)
-            {
-                archivoSalida.WriteLine($"{proveedor},{FloatToCustomString(porc1)},{FloatToCustomString(porc2)}");
-            }
-            archivoSalida.Close();
+            var registros1 = csv.GetRecords<DatosInternetMovil>().ToList();
+            //    Select(registro =>
+            //        (registro.Proveedor,
+            //         porc1: registro.Suscriptores_2015_2T * 100.0 / registro.Poblacion_2015_2T,
+            //         porc2: registro.Suscriptores_2016_1T * 100.0 / registro.Poblacion_2016_1T));
+            //var archivoSalida = File.CreateText(rutaSalida);
+            //archivoSalida.WriteLine("Proveedor,Porcentaje_penetracion_2015,Porcentaje_penetracion_2016");
+            //foreach (var (proveedor, porc1, porc2) in registros1)
+            //{
+            //    archivoSalida.WriteLine($"{proveedor},{FloatToCustomString(porc1)},{FloatToCustomString(porc2)}");
+            //}
+            //archivoSalida.Close();
             archivo.Close();
+            return registros1;
 
         }
 
@@ -118,7 +131,10 @@ namespace Internetmovil
         static void Main(string[] args)
         {
             //procesarXml();
-            CrearExcel(ProcesarJSON());// se est{a llamando el m{etodo para porcesar el json
+            //CrearExcel(ProcesarJSON());// se est{a llamando el m{etodo para procesar el json
+            var registros = ProcesarCsv();
+
+            GuardarenSql(registros);
             Console.WriteLine("He terminado");
             Console.ReadKey();
         }
