@@ -10,6 +10,9 @@ using System.Xml.Linq;
 using OfficeOpenXml;
 using Dapper;
 using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
+using Npgsql;
+using System.Data.SQLite;
 
 namespace Internetmovil
 {
@@ -17,6 +20,7 @@ namespace Internetmovil
     {
         static void GuardarenSql(IEnumerable<DatosInternetMovil> Lista) 
         {
+            
             SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-M667DM4Q;Initial Catalog=Internet_movil;Integrated Security=true");
             conexion.Open();
             foreach (var registro in Lista)
@@ -24,6 +28,45 @@ namespace Internetmovil
                 conexion.Execute("INSERT INTO proveedorInternetMovil VALUES(@Proveedor, @Suscriptores_2015_2T, @Suscriptores_2016_1T, @Poblacion_2016_1T, @Poblacion_2015_2T)", registro);
             }
             conexion.Close();
+        }
+
+        static void GuardarenMysql (IEnumerable<DatosInternetMovil> Lista)
+        {
+            string conexion = "User Id=root;Password= coconana777;Host=localhost;Database=internet_movil;";
+            MySqlConnection myConnection1 = new MySqlConnection(conexion);
+            myConnection1.Open();
+            foreach (var registro in Lista)
+            {
+                myConnection1.Execute("INSERT INTO proveedorinternetmovil VALUES(@Proveedor, @Suscriptores_2015_2T, @Suscriptores_2016_1T, @Poblacion_2016_1T, @Poblacion_2015_2T)", registro);
+            }
+            myConnection1.Close();
+        }
+
+        static void GuardarenPosgresql(IEnumerable<DatosInternetMovil> Lista)
+        {
+            string conexion = "Host =localhost; Username=postgres; Password = coconana777; Database = internet_movil";
+            var conn = new NpgsqlConnection(conexion);
+            conn.Open();
+            foreach (var registro in Lista)
+            {
+                conn.Execute("INSERT INTO proveedorinternetmovil VALUES(@Proveedor, @Suscriptores_2015_2T, @Suscriptores_2016_1T, @Poblacion_2016_1T, @Poblacion_2015_2T)", registro);
+            }
+            conn.Close();
+
+        }
+
+        static void GuardarenSqlite(IEnumerable<DatosInternetMovil> Lista)
+        {
+            var connstring = @"C:\Users\carlo\Documents\DATOS\internetmovil.db";
+
+
+            var conn = new SQLiteConnection($"Data Source={connstring};Version=3;" );
+            conn.Open();
+            foreach (var registro in Lista)
+            {
+                conn.Execute("INSERT INTO proveedorinternetmovil VALUES(@Proveedor, @Suscriptores_2015_2T, @Suscriptores_2016_1T, @Poblacion_2016_1T, @Poblacion_2015_2T)", registro);
+            }
+            conn.Close();
         }
         static DatosInternetMovil JArrayToDIM(JArray arreglo)
         {
@@ -134,7 +177,7 @@ namespace Internetmovil
             //CrearExcel(ProcesarJSON());// se est{a llamando el m{etodo para procesar el json
             var registros = ProcesarCsv();
 
-            GuardarenSql(registros);
+            GuardarenSqlite(registros);
             Console.WriteLine("He terminado");
             Console.ReadKey();
         }
