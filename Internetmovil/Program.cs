@@ -55,6 +55,23 @@ namespace Internetmovil
 
         }
 
+        static double PorcentajePenetracion2015(DatosInternetMovil registro)
+        {
+           return registro.Suscriptores_2015_2T * 100.0 / registro.Poblacion_2015_2T;
+
+        }
+
+        static double PorcentajePenetracion2016(DatosInternetMovil registro)
+        {
+            return registro.Suscriptores_2016_1T * 100.0 / registro.Poblacion_2016_1T;
+        }
+
+        static bool CumpleCondicion(DatosInternetMovil registro)
+        {
+            return (PorcentajePenetracion2015(registro) >= 1.0 || PorcentajePenetracion2016(registro) >= 1.0);
+            
+        }
+
         static void GuardarenSqlite(IEnumerable<DatosInternetMovil> Lista)
         {
             var connstring = @"C:\Users\carlo\Documents\DATOS\internetmovil.db";
@@ -143,7 +160,14 @@ namespace Internetmovil
             var archivo = File.OpenText(ruta);
             var csv = new CsvReader(archivo);
             csv.Configuration.Delimiter = ",";
-            var registros1 = csv.GetRecords<DatosInternetMovil>().ToList();
+            
+            var registros1 = csv.GetRecords<DatosInternetMovil>().
+                Where (CumpleCondicion).ToList();
+            
+            
+            
+            
+            
             //    Select(registro =>
             //        (registro.Proveedor,
             //         porc1: registro.Suscriptores_2015_2T * 100.0 / registro.Poblacion_2015_2T,
@@ -177,7 +201,7 @@ namespace Internetmovil
             //CrearExcel(ProcesarJSON());// se est{a llamando el m{etodo para procesar el json
             var registros = ProcesarCsv();
 
-            GuardarenSqlite(registros);
+            GuardarenMysql(registros);
             Console.WriteLine("He terminado");
             Console.ReadKey();
         }
